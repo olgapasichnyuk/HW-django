@@ -1,0 +1,29 @@
+
+{% extends "app_quotes/base.html" %}
+
+{% block content %}
+
+  <form method="POST" action="{% url 'app_quotes:quote' %}">
+
+    {% csrf_token %}
+<div class="input-group mb-3">
+    <label>
+        {{form.quote.label}}: {{form.quote}}
+    </label>
+</div>
+<div>
+  <label>Tags: {{form.tags}}</label>
+
+</div>
+<div>
+  <label>Author: {{form.author}}</label>
+</div>
+
+
+<div>
+    <button type="submit">Save</button>
+    <button type="reset">Reset</button>
+</div>
+</form>
+
+{% endblock %}

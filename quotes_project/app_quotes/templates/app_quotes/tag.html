@@ -1,0 +1,19 @@
+{% extends "app_quotes/base.html" %}
+
+{% block content %}
+
+<form method="POST" action="{% url 'app_quotes:tag' %}">
+    {% csrf_token %}
+    <div>
+        <label>Enter the tag name:
+            {{form.tag}}
+        </label>
+        <span>{{ form.errors.tag }}</span>
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+        <button type="reset">Reset</button>
+    </div>
+</form>
+
+{% endblock %}

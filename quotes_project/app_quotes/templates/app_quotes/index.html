@@ -1,0 +1,23 @@
+{% extends "app_quotes/base.html" %}
+
+{% block content %}
+
+<main class="container">
+
+
+<ul>
+    {% for quote in quotes %}
+    <li>
+        <p>{{ quote.quote }}</p>
+        <p>by <a href="{% url 'app_quotes:author_detail' quote.author.id %}">{{ quote.author}}</a></p>
+        {% for tag in quote.tags.all %}
+        <li>
+            {{ tag.tag }}
+        </li>
+        {% endfor %}
+        <hr>
+    </li>
+    {% endfor %}
+</ul>>
+</main>
+{% endblock %}

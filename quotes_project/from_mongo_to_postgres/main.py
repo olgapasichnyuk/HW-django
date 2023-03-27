@@ -1,7 +1,11 @@
 import configparser
+import pathlib
 
 from mongoengine import Document, CASCADE, connect
 from mongoengine.fields import StringField, ListField, ReferenceField
+from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.sql.schema import ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -26,15 +30,6 @@ class Quote(Document):
     author = ReferenceField(Author, reverse_delete_rule=CASCADE)
     quote = StringField()
 
-
-from sqlalchemy.orm import declarative_base
-from sqlalchemy.sql.schema import ForeignKey
-
-import configparser
-import pathlib
-
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.orm import sessionmaker, relationship
 
 file_ini = pathlib.Path(__file__).joinpath('config.ini')
 config = configparser.ConfigParser()
@@ -71,7 +66,6 @@ class quote(Base):
     author_id = Column(Integer, ForeignKey("app_quotes_author.id"))
 
 
-
 class tag(Base):
     __tablename__ = "app_quotes_tag"
     id = Column(Integer, primary_key=True)
@@ -85,50 +79,48 @@ class tags_rel(Base):
     tag_id = Column(Integer, ForeignKey("app_quotes_tag.id"))
 
 
-for item in Author.objects.all():
+def main():
+    for item in Author.objects.all():
+        new_author = author(fullname=item.fullname,
+                            born_date=item.born_date,
+                            born_location=item.born_location,
+                            description=item.description)
 
-
-    new_author = author(fullname=item.fullname,
-                        born_date=item.born_date,
-                        born_location=item.born_location,
-                        description=item.description)
-
-
-    session.add(new_author)
-
-session.commit()
-
-tags = []
-for item in Quote.objects.all():
-    tags += item.tags
-
-tags = set(tags)
-
-for i in tags:
-    new_tag = tag(tag=i)
-
-    session.add(new_tag)
-
-session.commit()
-
-all_authors = dict(session.query(author.fullname, author.id).all())
-print(all_authors)
-
-all_tags = dict(session.query(tag.tag, tag.id).all())
-print(all_tags)
-
-
-for item in Quote.objects.all():
-    new_qute = quote(quote=item.quote, author_id=all_authors[item.author.fullname])
-    session.add(new_qute)
-    session.commit()
-
-    for t in item.tags:
-
-        new_tags_rel = tags_rel(quote_id=new_qute.id, tag_id=all_tags[t])
-
-        session.add(new_tags_rel)
+        session.add(new_author)
 
     session.commit()
 
+    tags = []
+    for item in Quote.objects.all():
+        tags += item.tags
 
+    tags = set(tags)
+
+    for i in tags:
+        new_tag = tag(tag=i)
+
+        session.add(new_tag)
+
+    session.commit()
+
+    all_authors = dict(session.query(author.fullname, author.id).all())
+    print(all_authors)
+
+    all_tags = dict(session.query(tag.tag, tag.id).all())
+    print(all_tags)
+
+    for item in Quote.objects.all():
+        new_qute = quote(quote=item.quote, author_id=all_authors[item.author.fullname])
+        session.add(new_qute)
+        session.commit()
+
+        for t in item.tags:
+            new_tags_rel = tags_rel(quote_id=new_qute.id, tag_id=all_tags[t])
+
+            session.add(new_tags_rel)
+
+        session.commit()
+
+
+if __name__ == "__main__":
+    main()

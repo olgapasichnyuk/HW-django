@@ -12,14 +12,18 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
+import environ
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+env = environ.Env()
+environ.Env.read_env('./.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '*c6_0!(kl$qrzm%c2s3xxhd+0fpv66hov4t5@e*(nlw!x6551b'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,11 +79,11 @@ WSGI_APPLICATION = 'quotes_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'quotes_db',
-        'USER': 'postgres',
-        'PASSWORD': '111',
-        'HOST': 'localhost',
-        'PORT': '5432'
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT')
     }
 }
 
@@ -118,3 +122,14 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env('MAIL_HOST')
+EMAIL_PORT = env('MAIL_PORT')
+EMAIL_STARTTLS = False
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+EMAIL_HOST_USER = env('MAIL_USERNAME')
+EMAIL_HOST_PASSWORD = env('MAIL_PASSWORD')
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import TagForm, AuthorForm, QuoteForm
@@ -7,9 +8,16 @@ from .models import Tag, Author, Quote
 
 # Create your views here.
 
-def main(request):
+def main(request, page=1):
+
+    quotes = Quote.objects.all()
+    per_page = 10
+    paginator = Paginator(list(quotes), per_page)
+    quotes_on_page = paginator.page(page)
+    context = {"title": "Quotes to Scrape", "quotes": quotes_on_page}
+
     return render(request, 'app_quotes/index.html',
-                  context={"title": "Quotes to Scrape", "quotes": Quote.objects.all()})
+                  context=context)
 
 
 def tag(request):

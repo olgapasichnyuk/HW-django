@@ -18,6 +18,20 @@
         <hr>
     </li>
     {% endfor %}
-</ul>>
+</ul>
+    <ul class="pager">
+
+        <li class="previous">
+            <a class="{% if not quotes.has_previous %} disabled {% endif %}" href="{% if quotes.has_previous %} {% url 'app_quotes:main_paginate' quotes.previous_page_number %} {% else %} # {% endif %}">
+                Previous
+            </a>
+        </li>
+
+        <li class="next">
+            <a class="{% if not quotes.has_next %} disabled {% endif %}" href="{% if quotes.has_next %} {% url 'app_quotes:main_paginate' quotes.next_page_number %} {% else %} # {% endif %}">
+                Next
+            </a>
+        </li>
+    </ul>
 </main>
 {% endblock %}

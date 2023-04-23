@@ -10,16 +10,19 @@
             {{ form.username }}
         </label>
     </div>
-
+    <br>
     <div>
         <label>Password:
             {{ form.password }}
         </label>
     </div>
-
+    <br>
     <div class="grid">
         <button type="submit">Submit</button>
         <button type="reset" class="secondary">Reset</button>
+    </div>
+    <br>
+    <div class="small text-center"><a href="{% url "users:password_reset" %}" ><i>Forgot Password?</i></a>
     </div>
 </form>
 
